@@ -32,8 +32,14 @@ public class SearchPeople extends HttpServlet {
         }else{
             users.addAll(UserDao.fuzzyQuery(nickname));
         }
-
         SearchPeopleResponse response = new SearchPeopleResponse(0,users);
-        resp.getWriter().write(new Gson().toJson(response));
+        if(users.size() > 0 ){
+            System.out.println(new Gson().toJson(response));
+            resp.getWriter().write(new Gson().toJson(response));
+        }else{
+            response.setStatus(-1);
+            resp.getWriter().write(new Gson().toJson(response));
+        }
+
     }
 }

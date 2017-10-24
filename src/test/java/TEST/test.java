@@ -5,14 +5,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import db.BaseDao;
+import db.UserDao;
+import modules.response.LoginResponse;
+import sun.misc.BASE64Encoder;
 import uitls.DbHelper;
 import uitls.Utils;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -43,10 +43,26 @@ public class test {
 //        FileOutputStream fos = new FileOutputStream(file);
 //        PrintWriter pr = new PrintWriter(fos);
 //        pr.print(Utils.createJson("/home/steve/下载"));
+//        String a = "ASD|BBB";
+//        String[] t  = a.split("\\|");
+//        for(String e : t){
+//            System.out.println(e);
+//        }
 
+//        String photo = getImageStr("/home/steve/桌面/aa.png");
+//        String sql = "UPDATE user_message SET avatar = "+Utils.parseString(photo) + " WHERE id=11111";
+//        DbHelper.execute(UserDao.getConnection(),sql);
+
+
+
+//        LoginResponse loginResponse = new LoginResponse(0,new UserDao(1,2,"asd","ASD","ASd","ASD,","SAD"));
+//        System.out.println(new Gson().toJson(loginResponse));
 
 
     }
+
+    static int   id = 111;
+
 
     public static void show(Utils.MDirectory directory){
         System.out.println(directory.files);
@@ -55,6 +71,22 @@ public class test {
                 show(d);
             }
         }
+    }
+
+    public static String getImageStr(String imgFile) {
+        InputStream inputStream = null;
+        byte[] data = null;
+        try {
+            inputStream = new FileInputStream(imgFile);
+            data = new byte[inputStream.available()];
+            inputStream.read(data);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 加密
+        BASE64Encoder encoder = new BASE64Encoder();
+        return encoder.encode(data);
     }
 
 

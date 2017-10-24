@@ -17,12 +17,18 @@ public class BaseDao {
     //连接数据库
     public static Connection getConnection(){
 
-        try {
-            Class.forName(DB_DRIVER);
-            connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-        } catch (Exception e) {
-            System.out.println("数据库连接异常");
-            e.printStackTrace();
+        if(connection == null) {
+            synchronized (BaseDao.class) {
+                if(connection == null) {
+                    try {
+                        Class.forName(DB_DRIVER);
+                        connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+                    } catch (Exception e) {
+                        System.out.println("数据库连接异常");
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         return connection;
     }

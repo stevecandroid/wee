@@ -21,7 +21,7 @@ public class UserDao extends BaseDao {
     private String avatar;
     private transient String friends;
 
-    UserDao(int id, int age, String email, String password, String nickname, String avatar, String friends) {
+    public UserDao(int id, int age, String email, String password, String nickname, String avatar, String friends) {
         this.id = id;
         this.age = age;
         this.email = email;
@@ -85,9 +85,6 @@ public class UserDao extends BaseDao {
 
     public void setFriends(String friends) {
         this.friends = friends;
-    }
-
-    public UserDao() {
     }
 
     private static Connection conn = getConnection() ;
