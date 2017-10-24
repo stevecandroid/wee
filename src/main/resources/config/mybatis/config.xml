@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <typeAlias alias="User" type="db.modules.User"/>
+    </typeAliases>
+    <!-- 数据库环境配置-->
+    <environments default="development">
+        <environment id="development">
+            <!-- jdbc管理-->
+            <transactionManager type="JDBC"/>
+            <!-- 用什么连接池-->
+            <dataSource type="POOLED">
+                <!-- jdbc驱动-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <!-- 数据库名字url-->
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/WeeChat" />
+                <!-- 数据库用户-->
+                <property name="username" value="root"/>
+                <!-- 数据库用户密码-->
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- 把User.xml注册到mybatis的配置文件中，User.xml下面配置 -->
+    <mappers>
+        <mapper resource="db.mapper.UserMapper"/>
+    </mappers>
+</configuration>
