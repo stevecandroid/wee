@@ -19,6 +19,10 @@ public class Friends extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+
         UserDao user = (UserDao) req.getSession().getAttribute("user");
 //        user.getFriends()
         JsonObject json = new JsonObject();
@@ -29,6 +33,10 @@ public class Friends extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+
         UserDao user = (UserDao) req.getSession().getAttribute("user");
         String id = (String) req.getParameter("id");
         System.out.println(id);

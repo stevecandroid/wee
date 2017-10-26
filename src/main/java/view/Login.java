@@ -27,25 +27,23 @@ public class Login extends HttpServlet {
 //        resp.addCookie(cookie);
 //        resp.addCookie(new Cookie("ASDASDASDSA", "ASDASDSAD"));
 
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+
         if(!req.getSession().isNew()) {
             resp.getWriter().write(new Gson().toJson(new LoginResponse(0,((UserDao)req.getSession().getAttribute("user")))));
         }else{
             resp.getWriter().write(new Gson().toJson(new LoginResponse(-1,null)));
         }
 
-        System.out.println("A-----------");
-        System.out.println(new Gson().toJson(new LoginResponse(0,((UserDao)req.getSession().getAttribute("user")))));
+        System.out.println("login ");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("utf-8");
-//        System.out.println(req.getRemoteAddr());
-//
-//
-//        while(name.hasMoreElements()){
-//            System.out.println(name.nextElement());
-//        }
+        req.setCharacterEncoding("utf-8");
+
             UserDao user;
             Gson gson = new Gson();
             LoginResponse response;
@@ -69,8 +67,6 @@ public class Login extends HttpServlet {
             } else {
                 response = new LoginResponse(ACCOUNT_NOT_EXIST,user);
             }
-
-            System.out.println(gson.toJson(response));
 
             resp.getWriter().write(gson.toJson(response));
 

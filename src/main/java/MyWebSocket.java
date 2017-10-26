@@ -60,10 +60,10 @@ public class MyWebSocket {
                 long time= System.currentTimeMillis();
 
                 String sql = "INSERT chat_record (id,time,message,direction) VALUES ("+ Utils.parseString(this.id+"-"+id) +","+ Utils.parseString(time+"") +","
-                        +Utils.parseString(message)+","+"0"+")";
+                        +Utils.parseString(message)+","+"1"+")";
 
                 String sql2 = "INSERT chat_record (id,time,message,direction) VALUES ("+ Utils.parseString(id+"-"+this.id) +","+ Utils.parseString(time+"") +","
-                        +Utils.parseString(message)+","+"1"+")";
+                        +Utils.parseString(message)+","+"0"+")";
 
                 DbHelper.execute(BaseDao.getConnection(),sql);
                 DbHelper.execute(BaseDao.getConnection(),sql2);

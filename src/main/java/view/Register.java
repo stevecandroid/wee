@@ -20,11 +20,15 @@ public class Register extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+
         System.out.println(req.getSession().getId());
         Gson gson = new Gson();
         String requestBody = Utils.getRequestBody(req.getInputStream());
         RegisterRequest request = gson.fromJson(requestBody,RegisterRequest.class);
-        int id = UserDao.insert(request);
+        int id = UserDao.addUser(request);
         RegisterResponse response = new RegisterResponse(0,id);
         resp.getWriter().write(gson.toJson(response));
     }

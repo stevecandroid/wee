@@ -5,9 +5,7 @@ import uitls.DbHelper;
 import uitls.Utils;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
 
@@ -104,7 +102,7 @@ public class UserDao extends BaseDao {
         return  UserMapper.queryUsers(conn,sql);
     }
 
-    public static int insert(RegisterRequest user){
+    public static int addUser(RegisterRequest user){
 
         int id = getRandomId();
         while(query(id) != null){
@@ -131,6 +129,14 @@ public class UserDao extends BaseDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<Message> queryRecord(int from , int to){
+
+        String sql = "SELECT time,message,direction FROM chat_record WHERE id=" + Utils.parseString(from+"-"+to);
+
+        System.out.println(sql);
+        return UserMapper.queryRecord(conn,sql);
     }
 
 
