@@ -5,7 +5,7 @@ import db.UserDao;
 public class LoginResponse  {
 
     private int status;
-    private UserDao user;
+    private int userId;
 
     public int getStatus() {
         return status;
@@ -15,18 +15,17 @@ public class LoginResponse  {
         this.status = status;
     }
 
-    public LoginResponse(int status, UserDao user) {
+    public LoginResponse(int status, int userId) {
         this.status = status;
-        this.user = user;
-
+        this.userId = userId;
     }
 
-    public UserDao getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDao user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public static final transient int PASSWORD_INCORRECT = 1;

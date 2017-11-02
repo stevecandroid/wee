@@ -5,6 +5,7 @@ import db.UserDao;
 import modules.request.LoginRequest;
 import modules.response.BaseResponse;
 import modules.response.LoginResponse;
+import uitls.ResponseHelper;
 import uitls.Utils;
 
 import javax.servlet.ServletException;
@@ -12,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Response;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Enumeration;
@@ -30,13 +32,15 @@ public class Login extends HttpServlet {
         resp.setCharacterEncoding("utf-8");
         req.setCharacterEncoding("utf-8");
 
+        System.out.println("judge state");
+
         if(!req.getSession().isNew()) {
-            resp.getWriter().write(new Gson().toJson(new LoginResponse(0,((UserDao)req.getSession().getAttribute("user")))));
+            ResponseHelper.write(resp,new LoginResponse(0, (Integer) req.getSession().getAttribute("user_id")));
         }else{
-            resp.getWriter().write(new Gson().toJson(new LoginResponse(-1,null)));
+            ResponseHelper.write(resp,new LoginResponse(-1,-1));
         }
 
-        System.out.println("login ");
+        System.out.println("login");
     }
 
     @Override
@@ -50,25 +54,28 @@ public class Login extends HttpServlet {
             String requestBody = Utils.getRequestBody(req.getInputStream());
             LoginRequest request = gson.fromJson(requestBody, LoginRequest.class);
 
+            System.out.println("login " +  requestBody);
+
             if(request.getEmail() != null){
                 user = UserDao.query(request.getEmail());
-            }else{
+            }else {
                 user =  UserDao.query(request.getId());
             }
 
             if (user != null) {
                 if (user.getPassword().equals(request.getPassword())) {
-                    response = new LoginResponse(0,user);
-                    req.getSession().setAttribute("user",user);
-                    System.out.println(user.getNickname());
+                    response = new LoginResponse(0,user.getId());
+                    req.getSession().setAttribute("user_id",user.getId());
                 } else {
-                    response = new LoginResponse(PASSWORD_ERROR,user);
+                    response = new LoginResponse(PASSWORD_ERROR,-1);
                 }
             } else {
-                response = new LoginResponse(ACCOUNT_NOT_EXIST,user);
+                response = new LoginResponse(ACCOUNT_NOT_EXIST,user.getId());
             }
 
-            resp.getWriter().write(gson.toJson(response));
+//            resp.getWriter().write(gson.toJson(response));
+             ResponseHelper.write(resp,response);
+
 
     }
 }

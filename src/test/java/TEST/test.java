@@ -16,6 +16,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class test {
     public static void main(String[] args) throws SQLException, IOException {
@@ -57,6 +59,23 @@ public class test {
 
 //        LoginResponse loginResponse = new LoginResponse(0,new UserDao(1,2,"asd","ASD","ASd","ASD,","SAD"));
 //        System.out.println(new Gson().toJson(loginResponse));
+//       String init = "2|111111|1111|11111|";
+//       String id = "1111";
+////        if(mather.find()){
+////            System.out.println((mather.start(),mather.start()+id.length()),"");
+////        }Matcher mather = Pattern.compile("\\|1111\\|").matcher(init);
+////
+//        String[] t = (init.split("\\|1111\\|"));
+//        String result="" ;
+//        for (String s : t){
+//            result = result + s;
+//        }
+//
+//        System.out.println(result);
+//        System.out.println(UserDao.getFriends(4));
+        String a = "w:123213";
+       System.out.println(a.substring(a.indexOf(":")+1,a.length()));
+
 
 
     }

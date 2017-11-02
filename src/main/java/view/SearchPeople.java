@@ -29,17 +29,23 @@ public class SearchPeople extends HttpServlet {
         System.out.println("search nick name "+  nickname);
         List<UserDao> users = new ArrayList<UserDao>();
 
-        if(id != null){
-            UserDao d = UserDao.query(Integer.parseInt(id));
-            if( d != null)
-            users.add(d);
+        //三种查询方法
+        if(id != null) {
+            int mid = Integer.parseInt(id);
+            if (mid != -1) {
+                UserDao d = UserDao.query(mid);
+                if (d != null)
+                    users.add(d);
+            }
         }
+
 
         if ( email != null){
             UserDao d = UserDao.query(email);
             if(d != null)
             users.add(d);
         }
+        
 
         if( nickname!= null){
             List<UserDao> ds = UserDao.fuzzyQuery(nickname);
