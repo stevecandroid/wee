@@ -1,5 +1,7 @@
+import com.google.gson.Gson;
 import db.BaseDao;
 import db.UserDao;
+import modules.Message;
 import uitls.DbHelper;
 import uitls.Utils;
 
@@ -63,17 +65,17 @@ public class MyWebSocket {
     @OnMessage
     public void onMessage(String message, Session session) {
 
+        Message msg = new Gson().fromJson(message,Message.class);
 
+        // 自己规定的协议,CHAT_PREFIX开头的是两个人聊天
+        if(msg.getType() == Message.CHAT) {
+            //   c:t123123from'id'to>id,id,id,id,id,id,id,id<Message 聊天发送的格式
+//            int start = message.indexOf('>');
+//            int end = message.indexOf('<');
+//            String rawids = message.substring(start + 1, end);
+//            String[] ids = rawids.split(",");
 
-        // 自己规定的协议,CHAT_PREFIX开头的是聊天
-        if(message.startsWith(CHAT_PREFIX)) {
-            //   c://from'id'to>id,id,id,id,id,id,id,id<Message 聊天发送的格式
-            int start = message.indexOf('>');
-            int end = message.indexOf('<');
-            String rawids = message.substring(start + 1, end);
-            String[] ids = rawids.split(",");
-
-            for (String id : ids) {
+             String id = String.valueOf(msg.getToId());
                 try {
                     //得到接收方的对象,并主动发送信息
                     MyWebSocket websocket = webSocketMap.get(id);
@@ -83,14 +85,18 @@ public class MyWebSocket {
                     }
 
                     //记录发送信息的时间
-                    long time = System.currentTimeMillis();
+                    long time = msg.getTime();
 
                     //记录发送方的聊天记录
-                    String sql = "INSERT chat_record (id,time,message,direction) VALUES (" + Utils.parseString(this.id + "-" + id) + "," + Utils.parseString(time + "") + ","
+
+
+                    String sql = "INSERT chat_record (id,time,message,direction) VALUES " +
+                            "(" + Utils.parseString(this.id + "-" + id) + "," + Utils.parseString(String.valueOf(time)) + ","
                             + Utils.parseString(message) + "," + "1" + ")";
 
                     //记录接收方的聊天记录
-                    String sql2 = "INSERT chat_record (id,time,message,direction) VALUES (" + Utils.parseString(id + "-" + this.id) + "," + Utils.parseString(time + "") + ","
+                    String sql2 = "INSERT chat_record (id,time,message,direction) VALUES " +
+                            "(" + Utils.parseString(id + "-" + this.id) + "," + Utils.parseString(String.valueOf(time)) + ","
                             + Utils.parseString(message) + "," + "0" + ")";
 
                     DbHelper.execute(BaseDao.getConnection(), sql);
@@ -99,7 +105,7 @@ public class MyWebSocket {
                 } catch (IOException | SQLException e) {
                     e.printStackTrace();
                 }
-            }
+
         }
     }
 

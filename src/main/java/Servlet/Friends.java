@@ -1,11 +1,9 @@
-package view;
+package Servlet;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import db.UserDao;
-import modules.response.BaseResponse;
 import uitls.ResponseHelper;
 
 import javax.servlet.ServletException;
@@ -31,7 +29,6 @@ public class Friends extends HttpServlet {
 
         int userId = (int) req.getSession().getAttribute("user_id");
         String friends = UserDao.queryFriends(userId);
-
 
         JsonObject json = new JsonObject();
         json.add("status",new JsonPrimitive(0));
@@ -70,18 +67,8 @@ public class Friends extends HttpServlet {
                 if(succ) ResponseHelper.writeBasicSuccess(resp);
                 else ResponseHelper.writeBasicError(resp,DELETE_FAIL);
                 break;
-
-
         }
 
-
-
-
-
-
-
     }
-
-
 
 }

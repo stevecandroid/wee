@@ -1,6 +1,7 @@
-package view;
+package Servlet;
 
 import com.google.gson.Gson;
+import db.User;
 import db.UserDao;
 import modules.response.SearchPeopleResponse;
 
@@ -11,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(name = "searchPeople",urlPatterns = "/people/search")
 public class SearchPeople extends HttpServlet {
@@ -26,15 +29,27 @@ public class SearchPeople extends HttpServlet {
         String email = req.getParameter("email");
         String nickname = req.getParameter("nickname");
 
-        System.out.println("search nick name "+  nickname);
-        List<UserDao> users = new ArrayList<UserDao>();
+        int from = (int) req.getSession().getAttribute("user_id");
+        List<UserDao> users = new ArrayList<>();
+        Set<Integer> addedUsers = new HashSet<>();
+
+        if( nickname!= null){
+            List<UserDao> ds = UserDao.fuzzyQuery(nickname,from);
+            if(ds.size()>0)
+            users.addAll(ds);
+
+            for(User u : ds){
+                addedUsers.add(u.getId());
+                u.setAvatar("");
+            }
+        }
 
         //三种查询方法
         if(id != null) {
             int mid = Integer.parseInt(id);
             if (mid != -1) {
                 UserDao d = UserDao.query(mid);
-                if (d != null)
+                if( null != d && !addedUsers.contains(d.getId()) )
                     users.add(d);
             }
         }
@@ -42,18 +57,13 @@ public class SearchPeople extends HttpServlet {
 
         if ( email != null){
             UserDao d = UserDao.query(email);
-            if(d != null)
-            users.add(d);
-        }
-        
-
-        if( nickname!= null){
-            List<UserDao> ds = UserDao.fuzzyQuery(nickname);
-            if(ds.size()>0)
-            users.addAll(ds);
+            if(d != null && !addedUsers.contains(d.getId()))
+                users.add(d);
         }
 
-        System.out.println(users.size());
+
+
+//        System.out.println(users.size());
 
         SearchPeopleResponse response = new SearchPeopleResponse(0,users);
         if(users.size() > 0 ){

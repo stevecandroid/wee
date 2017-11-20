@@ -6,19 +6,10 @@
          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <servlet>
-        <servlet-name>sevlet</servlet-name>
-        <servlet-class>Servlet</servlet-class>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>sevlet</servlet-name>
-        <url-pattern>/home</url-pattern>
-    </servlet-mapping>
 
     <servlet>
         <servlet-name>login</servlet-name>
-        <servlet-class>view.Login</servlet-class>
+        <servlet-class>Servlet.Login</servlet-class>
     </servlet>
 
 

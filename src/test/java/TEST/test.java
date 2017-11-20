@@ -73,11 +73,16 @@ public class test {
 //
 //        System.out.println(result);
 //        System.out.println(UserDao.getFriends(4));
-        String a = "w:123213";
-       System.out.println(a.substring(a.indexOf(":")+1,a.length()));
-
-
-
+//        int from = 111;
+//        int to = 1;
+//        long time = 1510576398650L;
+//        int direction = 1;
+//        String sql = "DELETE FROM chat_record WHERE id="+Utils.parseString(from+"-"+to)+" AND time="+time +" AND direction="+direction;
+//        DbHelper.execute(UserDao.getConnection(),sql);
+//
+//        System.out.println(sql);
+        String sql = "INSERT chat_record (id,time,message,direction) VALUES (\"111-1\",\"1511010015560\",\"{\"direction\":1,\"fromId\":111,\"message\":\"室内设计\",\"time\":1511010015560,\"toId\":1,\"type\":1}\",1)";
+        DbHelper.execute(UserDao.getConnection(),sql);
     }
 
     static int   id = 111;

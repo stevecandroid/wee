@@ -1,14 +1,10 @@
-package view;
+package Servlet;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import db.Message;
 import db.UserDao;
+import modules.Message;
 import modules.response.SearchRecordResponse;
-import uitls.DbHelper;
 import uitls.ResponseHelper;
 
 import javax.servlet.ServletException;

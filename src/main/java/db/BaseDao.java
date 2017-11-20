@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class BaseDao {
+    public static String USER_MESSAGE="user_message";
+    public static String CHAT_RECORD="chat_record";
     private static String USER = "root";
     private static String PASSWORD = "123456";
     private static String DB_URL = "jdbc:mysql://localhost:3306/WeeChat?characterEncoding=utf8&useSSL=true";

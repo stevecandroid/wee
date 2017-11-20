@@ -1,6 +1,6 @@
 package modules.response;
 
-import db.Message;
+import modules.Message;
 
 import java.util.List;
 

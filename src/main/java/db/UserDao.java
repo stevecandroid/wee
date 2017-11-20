@@ -1,5 +1,6 @@
 package db;
 
+import modules.Message;
 import modules.request.RegisterRequest;
 import uitls.DbHelper;
 import uitls.Utils;
@@ -9,7 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
-public class UserDao extends BaseDao {
+public class UserDao extends User {
 
 
     public static final int ONLINE = 1;
@@ -21,54 +22,44 @@ public class UserDao extends BaseDao {
     //数据库连接
     private static Connection conn = getConnection();
 
-    private int id;
-    private int age;
-    private String email;
-    private String nickname;
-    private String avatar;
-    private int status;
-    private transient String password;
-    private transient String friends;
-    public UserDao(int id, int age, String email, String password, String nickname, String avatar, String friends,int status) {
-        this.id = id;
-        this.age = age;
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.avatar = avatar;
-        this.friends = friends;
-        this.status = status;
+    private transient String avatar;
+
+    public UserDao(int id, int age, String email, String password, String nickname, String avatar, String friends, int status) {
+        super(id, age, email, password, nickname, avatar, friends, status);
     }
 
     public static UserDao query(int id) {
-        String sql = "SELECT id,age,email,password,nickname,avatar,friends,status FROM user_message WHERE id=" + id;
+        String sql = "SELECT id,age,email,password,nickname,avatar,friends,status FROM "+USER_MESSAGE+" WHERE id=" + id;
         return UserMapper.queryUser(conn, sql);
     }
 
     public static UserDao query(String email) {
-        String sql = "SELECT id,age,email,password,nickname,avatar,friends,status FROM user_message WHERE email=" + Utils.parseString(email);
+        String sql = "SELECT id,age,email,password,nickname,avatar,friends,status FROM "+USER_MESSAGE+" WHERE email=" + Utils.parseString(email);
         return UserMapper.queryUser(conn, sql);
     }
 
-    public static List<UserDao> fuzzyQuery(String nickname) {
-        String sql = "SELECT id,age,email,password,nickname,avatar,friends,status FROM user_message WHERE nickname LIKE " + Utils.parseString('%' + nickname + '%');
-        return UserMapper.queryUsers(conn, sql);
+    /**
+     *
+     * @param nickname 查询的名字
+     * @param execId 去除的ID
+     */
+    public static List<UserDao> fuzzyQuery(String nickname,int execId) {
+        String sql = "SELECT id,age,email,password,nickname,avatar,friends,status FROM "+USER_MESSAGE+" WHERE nickname LIKE " + Utils.parseString('%' + nickname + '%');
+        return UserMapper.queryUsers(conn, sql,execId);
     }
 
     //注册
-    public static int addUser(RegisterRequest user) {
+    public static int addUser(RegisterRequest user) throws SQLException {
 
         int id = getRandomId();
         while (query(id) != null) {
             id = getRandomId();
         }
 
-        String sql = "INSERT user_message (id,nickname,password) VALUES (" + id + ",\"" + user.getNickname() + "\",\"" + user.getPassword() + "\")";
-        try {
-            DbHelper.execute(conn, sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String sql = "INSERT "+USER_MESSAGE+" (id,nickname,password) VALUES (" + id + ",\"" + user.getNickname() + "\",\"" + user.getPassword() + "\")";
+
+        DbHelper.execute(conn, sql);
+
         return id;
     }
 
@@ -85,8 +76,8 @@ public class UserDao extends BaseDao {
         if (user == target) return false;
 
         String tagetFriends = queryFriends(target);
-        String sql = "UPDATE user_message SET friends = " + Utils.parseString(friends + target + SEPERATOR) + " WHERE id=" + user;
-        String sql2 = "UPDATE user_message SET friends = " + Utils.parseString(tagetFriends + user + SEPERATOR) + " WHERE id=" + target;
+        String sql = "UPDATE "+USER_MESSAGE+" SET friends = " + Utils.parseString(friends + target + SEPERATOR) + " WHERE id=" + user;
+        String sql2 = "UPDATE "+USER_MESSAGE+" SET friends = " + Utils.parseString(tagetFriends + user + SEPERATOR) + " WHERE id=" + target;
 
         //判断是否有重复添加
         boolean allowAdd = true;
@@ -147,25 +138,36 @@ public class UserDao extends BaseDao {
 
     //聊天记录
     public static List<Message> queryRecord(int from, int to) {
-        String sql = "SELECT time,message,direction FROM chat_record WHERE id=" + Utils.parseString(from + "-" + to);
+        String sql = "SELECT time,message,direction FROM "+CHAT_RECORD+" WHERE id=" + Utils.parseString(from + "-" + to);
         System.out.println(sql);
         return UserMapper.queryRecord(conn, sql);
     }
 
-    //修改用户头像信息
-    public static void modifyNameAvatar(int id, String avatar, String nickname) {
+    //删除某条聊天记录
+    public static boolean deleteRecord(int from , int to , long time , int direction){
+        String sql = "DELETE FROM "+CHAT_RECORD+" WHERE id="
+                +Utils.parseString(from+"-"+to)
+                +" AND time="+time
+                +" AND direction="+direction;
         try {
+            DbHelper.execute(conn,sql);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //修改用户头像信息
+    public static void modifyNameAvatar(int id, String avatar, String nickname) throws SQLException {
 
             if (avatar != null && nickname != null) {
-                String sql = "UPDATE user_message SET avatar = " + Utils.parseString(avatar) + ","
+                String sql = "UPDATE "+USER_MESSAGE+" SET avatar = " + Utils.parseString(avatar) + ","
                         + "nickname = " + Utils.parseString(nickname)
                         + " WHERE  id=" + id;
                 DbHelper.execute(conn, sql);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     //删除好友
@@ -186,7 +188,7 @@ public class UserDao extends BaseDao {
     }
 
     public static void setOnline(int id){
-        String sql = "UPDATE user_message SET status= "+ONLINE +" WHERE id=" + id;
+        String sql = "UPDATE "+USER_MESSAGE+" SET status= "+ONLINE +" WHERE id=" + id;
         try {
             DbHelper.execute(conn,sql);
         } catch (SQLException e) {
@@ -195,7 +197,7 @@ public class UserDao extends BaseDao {
     }
 
     public static void setOffLine(int id){
-        String sql = "UPDATE user_message SET status="+OFFLINE +" WHERE id=" + id;
+        String sql = "UPDATE "+USER_MESSAGE+" SET status="+OFFLINE +" WHERE id=" + id;
         try {
             DbHelper.execute(conn,sql);
         } catch (SQLException e) {
@@ -211,70 +213,6 @@ public class UserDao extends BaseDao {
             builder.append(random.nextInt(10));
         }
         return Integer.parseInt(builder.toString());
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getFriends() {
-        return friends;
-    }
-
-    public void setFriends(String friends) {
-        this.friends = friends;
     }
 
     @Override

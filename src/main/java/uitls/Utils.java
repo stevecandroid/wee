@@ -3,6 +3,7 @@ package uitls;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import sun.misc.BASE64Decoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class Utils {
     }
 
     public static String parseString(String str){
-        return "\"" + str + "\"";
+        return "\'" + str + "\'";
     }
 
 
@@ -61,6 +62,16 @@ public class Utils {
         public String path;
         public List<String> files;
         public List<MDirectory> directorys;
+    }
+
+    public static byte[] base64toBytes(String str) {
+          BASE64Decoder decoder = new BASE64Decoder();
+        try {
+            return decoder.decodeBuffer(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
