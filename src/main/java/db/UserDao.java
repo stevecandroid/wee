@@ -10,6 +10,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
+import static db.BaseDao.CHAT_RECORD;
+import static db.BaseDao.USER_MESSAGE;
+import static db.BaseDao.getConnection;
+
 public class UserDao extends User {
 
 
